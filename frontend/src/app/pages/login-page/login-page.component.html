@@ -1,0 +1,24 @@
+<section class="login">
+  <div class="login__panel">
+    <h1>Demo Login</h1>
+    <p class="muted">Sign in with a Keycloak user to generate a demo token.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-grid">
+        <label>
+          Username
+          <input type="text" formControlName="username" placeholder="demo-user" />
+        </label>
+        <label>
+          Password
+          <input type="password" formControlName="password" placeholder="password" />
+        </label>
+      </div>
+
+      <button class="button button--primary" type="submit" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Signing in...' : 'Login' }}
+      </button>
+      <span class="error" *ngIf="errorMessage">{{ errorMessage }}</span>
+    </form>
+  </div>
+</section>

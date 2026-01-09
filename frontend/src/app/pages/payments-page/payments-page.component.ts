@@ -1,13 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { PaymentsService, PaymentIntent } from '../../services/payments.service';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-payments-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './payments-page.component.html',
   styleUrl: './payments-page.component.scss'
 })
@@ -17,7 +18,6 @@ export class PaymentsPageComponent {
   private readonly authService = inject(AuthService);
 
   readonly intents: PaymentIntent[] = [];
-  readonly isOps$ = this.authService.isOps$;
   errorMessage = '';
   isSubmitting = false;
 
@@ -28,6 +28,14 @@ export class PaymentsPageComponent {
     currency: ['USD', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
     reference: ['']
   });
+
+  get isOps(): boolean {
+    return this.authService.isInRole('ops');
+  }
+
+  get isLoggedIn(): boolean {
+    return Boolean(this.authService.getToken());
+  }
 
   submit(): void {
     this.errorMessage = '';

@@ -3,6 +3,10 @@
     <h1>Payments</h1>
     <p class="muted">Create a payment intent and capture it when ready.</p>
 
+    <div class="banner" *ngIf="!isLoggedIn">
+      You are not logged in. <a routerLink="/login">Log in to capture payments.</a>
+    </div>
+
     <form [formGroup]="form" (ngSubmit)="submit()">
       <div class="form-grid">
         <label>
@@ -50,21 +54,14 @@
         <span>{{ intent.amount }} {{ intent.currency }}</span>
         <span>{{ intent.merchantId }} / {{ intent.customerId }}</span>
       </div>
-      <ng-container *ngIf="canCapture(intent)">
-        <button
-          class="button button--ghost"
-          type="button"
-          *ngIf="(isOps$ | async); else opsOnly"
-          (click)="capture(intent)"
-        >
-          Capture
-        </button>
-        <ng-template #opsOnly>
-          <button class="button button--ghost" type="button" disabled title="Ops role required">
-            Capture
-          </button>
-        </ng-template>
-      </ng-container>
+      <button
+        class="button button--ghost"
+        type="button"
+        *ngIf="canCapture(intent) && isOps"
+        (click)="capture(intent)"
+      >
+        Capture
+      </button>
     </div>
   </div>
 </section>
