@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { PaymentsService, PaymentIntent } from '../../services/payments.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-payments-page',
@@ -13,8 +14,10 @@ import { PaymentsService, PaymentIntent } from '../../services/payments.service'
 export class PaymentsPageComponent {
   private readonly formBuilder = inject(FormBuilder);
   private readonly paymentsService = inject(PaymentsService);
+  private readonly authService = inject(AuthService);
 
   readonly intents: PaymentIntent[] = [];
+  readonly isOps$ = this.authService.isOps$;
   errorMessage = '';
   isSubmitting = false;
 

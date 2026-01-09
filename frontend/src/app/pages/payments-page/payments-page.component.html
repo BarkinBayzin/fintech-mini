@@ -50,15 +50,21 @@
         <span>{{ intent.amount }} {{ intent.currency }}</span>
         <span>{{ intent.merchantId }} / {{ intent.customerId }}</span>
       </div>
-      <button
-        class="button button--ghost"
-        type="button"
-        [disabled]="!canCapture(intent)"
-        *ngIf="canCapture(intent)"
-        (click)="capture(intent)"
-      >
-        Capture
-      </button>
+      <ng-container *ngIf="canCapture(intent)">
+        <button
+          class="button button--ghost"
+          type="button"
+          *ngIf="(isOps$ | async); else opsOnly"
+          (click)="capture(intent)"
+        >
+          Capture
+        </button>
+        <ng-template #opsOnly>
+          <button class="button button--ghost" type="button" disabled title="Ops role required">
+            Capture
+          </button>
+        </ng-template>
+      </ng-container>
     </div>
   </div>
 </section>

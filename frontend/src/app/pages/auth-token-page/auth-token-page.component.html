@@ -13,8 +13,11 @@
     <div class="auth__actions">
       <button class="button button--primary" type="button" (click)="save()">Save</button>
       <button class="button button--ghost" type="button" (click)="clear()">Clear</button>
-      <span class="state" [class.state--on]="hasToken">
-        {{ hasToken ? 'Token present' : 'Token missing' }}
+      <span class="state" [class.state--on]="(hasToken$ | async) === true">
+        {{ (hasToken$ | async) ? 'Token present' : 'Token missing' }}
+      </span>
+      <span class="state" [class.state--on]="(isOps$ | async) === true">
+        {{ (isOps$ | async) ? 'Ops role detected' : 'Ops role missing' }}
       </span>
     </div>
   </div>

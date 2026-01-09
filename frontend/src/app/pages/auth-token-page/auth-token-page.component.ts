@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { map } from 'rxjs';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-auth-token-page',
@@ -10,23 +12,20 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './auth-token-page.component.scss'
 })
 export class AuthTokenPageComponent {
-  token = localStorage.getItem('access_token') ?? '';
+  private readonly authService = inject(AuthService);
 
-  get hasToken(): boolean {
-    return Boolean(localStorage.getItem('access_token'));
-  }
+  readonly token$ = this.authService.token$;
+  readonly isOps$ = this.authService.isOps$;
+  readonly hasToken$ = this.token$.pipe(map((token) => Boolean(token)));
+
+  token = this.authService.getToken() ?? '';
 
   save(): void {
-    if (this.token.trim().length === 0) {
-      this.clear();
-      return;
-    }
-
-    localStorage.setItem('access_token', this.token.trim());
+    this.authService.setToken(this.token);
   }
 
   clear(): void {
-    localStorage.removeItem('access_token');
+    this.authService.clearToken();
     this.token = '';
   }
 }
