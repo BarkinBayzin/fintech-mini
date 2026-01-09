@@ -2,6 +2,7 @@ using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using MassTransit;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -31,52 +32,13 @@ builder.Services
             ValidateAudience = false,
             ValidIssuer = "http://localhost:8081/realms/fintech"
         };
-        options.Events = new JwtBearerEvents
-        {
-            OnTokenValidated = context =>
-            {
-                var identity = context.Principal?.Identity as ClaimsIdentity;
-                if (identity is null)
-                {
-                    return Task.CompletedTask;
-                }
-
-                var realmAccessClaim = context.Principal?.FindFirst("realm_access")?.Value;
-                if (string.IsNullOrWhiteSpace(realmAccessClaim))
-                {
-                    return Task.CompletedTask;
-                }
-
-                try
-                {
-                    using var doc = JsonDocument.Parse(realmAccessClaim);
-                    if (!doc.RootElement.TryGetProperty("roles", out var rolesElement))
-                    {
-                        return Task.CompletedTask;
-                    }
-
-                    foreach (var role in rolesElement.EnumerateArray())
-                    {
-                        var roleName = role.GetString();
-                        if (!string.IsNullOrWhiteSpace(roleName))
-                        {
-                            identity.AddClaim(new Claim(ClaimTypes.Role, roleName));
-                        }
-                    }
-                }
-                catch (JsonException)
-                {
-                    return Task.CompletedTask;
-                }
-
-                return Task.CompletedTask;
-            }
-        };
     });
+
+builder.Services.AddTransient<IClaimsTransformation, KeycloakRoleClaimsTransformation>();
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("OpsOnly", policy => policy.RequireRole("ops"));
+    options.AddPolicy("ops", policy => policy.RequireRole("ops"));
 });
 
 builder.Services.AddMassTransit(configurator =>
@@ -326,7 +288,7 @@ app.MapPost("/api/payments/intents/{id:guid}/capture", async (
 .Produces(StatusCodes.Status400BadRequest)
 .Produces(StatusCodes.Status404NotFound)
 .ProducesValidationProblem()
-.RequireAuthorization("OpsOnly");
+.RequireAuthorization("ops");
 
 app.MapGet("/api/payments/intents/{id:guid}", async (Guid id, PaymentsDbContext dbContext) =>
 {
