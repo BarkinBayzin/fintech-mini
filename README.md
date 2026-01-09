@@ -117,7 +117,7 @@ Outbox ensures reliable publish even if the broker is temporarily unavailable
 
 If login fails:
 
-Ensure Keycloak is up: http://localhost:8081
+Ensure Keycloak is up: http://localhost:8081  (credentials = admin/admin)
 
 Ensure Keycloak container started successfully and the realm was imported:
 - Default realm: fintech
