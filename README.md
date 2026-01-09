@@ -1,3 +1,42 @@
+## Architecture Overview
+
+The system is designed as a small-scale, production-like fintech platform
+using **event-driven architecture** and **strong domain boundaries**.
+
+![Architecture Diagram](docs/architecture.png)
+
+### Flow Summary
+
+1. **Angular UI**
+   - Handles authentication via Keycloak
+   - Allows creating and capturing payment intents
+
+2. **Payments API**
+   - Validates JWT tokens issued by Keycloak
+   - Capture operation requires `ops` role
+   - Persists domain events into an **Outbox table**
+
+3. **Outbox Pattern**
+   - Ensures reliable event publishing
+   - Prevents message loss in case of broker failure
+
+4. **RabbitMQ**
+   - Delivers `PaymentCaptured` integration events
+
+5. **Ledger API**
+   - Consumes payment events
+   - Writes **double-entry journal entries** (debit = credit)
+   - Stores balances in PostgreSQL
+
+6. **Keycloak**
+   - Issues JWT tokens
+   - Manages users and roles (`ops`)
+
+This setup demonstrates **real-world patterns** commonly used in fintech and
+enterprise systems: reliable messaging, role-based authorization, and
+event-driven consistency.
+
+
 # Fintech Mini Platform (Demo)
 
 Production-like fintech demo showcasing:
