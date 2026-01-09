@@ -1,0 +1,21 @@
+<section class="auth">
+  <div class="auth__panel">
+    <h1>Auth Token</h1>
+    <p class="muted">
+      Paste a JWT token and save it. It will be attached to /api requests.
+    </p>
+
+    <label>
+      JWT Token
+      <textarea rows="6" [(ngModel)]="token" placeholder="eyJhbGciOi..."></textarea>
+    </label>
+
+    <div class="auth__actions">
+      <button class="button button--primary" type="button" (click)="save()">Save</button>
+      <button class="button button--ghost" type="button" (click)="clear()">Clear</button>
+      <span class="state" [class.state--on]="hasToken">
+        {{ hasToken ? 'Token present' : 'Token missing' }}
+      </span>
+    </div>
+  </div>
+</section>

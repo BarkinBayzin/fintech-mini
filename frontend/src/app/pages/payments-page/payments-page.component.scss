@@ -1,0 +1,105 @@
+.payments {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: minmax(280px, 1.1fr) minmax(280px, 1fr);
+}
+
+.payments__panel {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(15, 32, 48, 0.15);
+  border-radius: 18px;
+  padding: 1.75rem;
+  box-shadow: 0 16px 36px rgba(13, 25, 38, 0.08);
+}
+
+.payments__panel--list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 1.25rem 0;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-weight: 600;
+}
+
+input {
+  border-radius: 12px;
+  border: 1px solid rgba(15, 32, 48, 0.2);
+  padding: 0.6rem 0.8rem;
+  font-size: 0.95rem;
+  background: #f7f9fb;
+}
+
+input:focus {
+  outline: 2px solid rgba(38, 95, 132, 0.4);
+}
+
+.span-2 {
+  grid-column: span 2;
+}
+
+.intent {
+  border-radius: 16px;
+  border: 1px solid rgba(15, 32, 48, 0.1);
+  padding: 1rem;
+  background: #f8fbff;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.intent__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.intent__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.9rem;
+}
+
+.status {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  background: rgba(38, 95, 132, 0.1);
+}
+
+.error {
+  display: inline-block;
+  margin-left: 1rem;
+  color: #9f2d2d;
+  font-weight: 600;
+}
+
+.empty {
+  color: #51606d;
+}
+
+@media (max-width: 900px) {
+  .payments {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .span-2 {
+    grid-column: span 1;
+  }
+}

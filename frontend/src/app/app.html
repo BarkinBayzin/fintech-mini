@@ -1,0 +1,17 @@
+<div class="app-shell">
+  <header class="app-header">
+    <div class="logo">
+      <span class="logo__mark">FM</span>
+      <span class="logo__text">{{ title }}</span>
+    </div>
+    <nav class="nav">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+      <a routerLink="/payments" routerLinkActive="active">Payments</a>
+      <a routerLink="/auth" routerLinkActive="active">Auth</a>
+    </nav>
+  </header>
+
+  <main class="app-main">
+    <router-outlet></router-outlet>
+  </main>
+</div>

@@ -1,0 +1,64 @@
+<section class="payments">
+  <div class="payments__panel">
+    <h1>Payments</h1>
+    <p class="muted">Create a payment intent and capture it when ready.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-grid">
+        <label>
+          Merchant Id
+          <input type="text" formControlName="merchantId" placeholder="merchant_123" />
+        </label>
+        <label>
+          Customer Id
+          <input type="text" formControlName="customerId" placeholder="customer_456" />
+        </label>
+        <label>
+          Amount
+          <input type="number" step="0.01" formControlName="amount" placeholder="125.00" />
+        </label>
+        <label>
+          Currency
+          <input type="text" maxlength="3" formControlName="currency" placeholder="USD" />
+        </label>
+        <label class="span-2">
+          Reference
+          <input type="text" formControlName="reference" placeholder="order-987" />
+        </label>
+      </div>
+
+      <button class="button button--primary" type="submit" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Submitting...' : 'Create intent' }}
+      </button>
+      <span class="error" *ngIf="errorMessage">{{ errorMessage }}</span>
+    </form>
+  </div>
+
+  <div class="payments__panel payments__panel--list">
+    <h2>Recent intents</h2>
+    <div *ngIf="intents.length === 0" class="empty">No intents yet.</div>
+
+    <div class="intent" *ngFor="let intent of intents">
+      <div class="intent__header">
+        <div>
+          <strong>{{ intent.id }}</strong>
+          <div class="muted">{{ intent.reference || 'No reference' }}</div>
+        </div>
+        <span class="status">{{ intent.status }}</span>
+      </div>
+      <div class="intent__meta">
+        <span>{{ intent.amount }} {{ intent.currency }}</span>
+        <span>{{ intent.merchantId }} / {{ intent.customerId }}</span>
+      </div>
+      <button
+        class="button button--ghost"
+        type="button"
+        [disabled]="!canCapture(intent)"
+        *ngIf="canCapture(intent)"
+        (click)="capture(intent)"
+      >
+        Capture
+      </button>
+    </div>
+  </div>
+</section>

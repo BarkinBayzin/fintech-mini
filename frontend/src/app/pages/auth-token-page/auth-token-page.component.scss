@@ -1,0 +1,46 @@
+.auth {
+  display: flex;
+  justify-content: center;
+}
+
+.auth__panel {
+  width: min(720px, 100%);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(15, 32, 48, 0.15);
+  border-radius: 18px;
+  padding: 1.75rem;
+  box-shadow: 0 16px 36px rgba(13, 25, 38, 0.08);
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 1rem;
+  font-weight: 600;
+}
+
+textarea {
+  border-radius: 14px;
+  border: 1px solid rgba(15, 32, 48, 0.2);
+  padding: 0.75rem;
+  font-family: "Courier New", monospace;
+  background: #f7f9fb;
+}
+
+.auth__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.state {
+  font-weight: 600;
+  color: #9f2d2d;
+}
+
+.state--on {
+  color: #2a7c55;
+}
