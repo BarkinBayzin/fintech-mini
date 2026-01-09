@@ -1,9 +1,11 @@
+using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Ledger.Api.Consumers;
 using Ledger.Api.Contracts;
 using Ledger.Api.Data;
 using Ledger.Api.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using MassTransit;
 
@@ -11,6 +13,64 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<LedgerDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("LedgerDb")));
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.Authority = "http://localhost:8081/realms/fintech";
+        options.Audience = "fintech-ui";
+        options.RequireHttpsMetadata = false;
+        options.TokenValidationParameters = new()
+        {
+            RoleClaimType = ClaimTypes.Role,
+            ValidateAudience = false,
+            ValidIssuer = "http://localhost:8081/realms/fintech"
+        };
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = context =>
+            {
+                var identity = context.Principal?.Identity as ClaimsIdentity;
+                if (identity is null)
+                {
+                    return Task.CompletedTask;
+                }
+
+                var realmAccessClaim = context.Principal?.FindFirst("realm_access")?.Value;
+                if (string.IsNullOrWhiteSpace(realmAccessClaim))
+                {
+                    return Task.CompletedTask;
+                }
+
+                try
+                {
+                    using var doc = JsonDocument.Parse(realmAccessClaim);
+                    if (!doc.RootElement.TryGetProperty("roles", out var rolesElement))
+                    {
+                        return Task.CompletedTask;
+                    }
+
+                    foreach (var role in rolesElement.EnumerateArray())
+                    {
+                        var roleName = role.GetString();
+                        if (!string.IsNullOrWhiteSpace(roleName))
+                        {
+                            identity.AddClaim(new Claim(ClaimTypes.Role, roleName));
+                        }
+                    }
+                }
+                catch (JsonException)
+                {
+                    return Task.CompletedTask;
+                }
+
+                return Task.CompletedTask;
+            }
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddMassTransit(configurator =>
 {
@@ -81,6 +141,9 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
 }
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapPost("/api/ledger/journal-entries", async (
     CreateJournalEntryRequest request,
